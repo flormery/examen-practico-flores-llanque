@@ -1,0 +1,15 @@
+<group name="local,exfiltration,">
+  <!-- 
+    LÓGICA DE LA REGLA COMPUESTA (Tarea 2.2):
+    Esta regla se dispara (Severidad 14) cuando se detecta una transferencia saliente 
+    superior a 500 MB (evaluado con regex) correlacionada fuera del horario laboral 
+    (entre las 22:00 y las 06:00).
+  -->
+  <rule id="100002" level="14">
+    <if_sid>1002</if_sid>
+    <time>22:00 - 06:00</time>
+    <regex>5[0-9][0-9]\s*MB|[6-9][0-9][0-9]\s*MB|\d{4,}\s*MB</regex>
+    <description>Alerta Critica: Exfiltracion potencial de datos masiva (>500MB) fuera de horario laboral</description>
+    <group>exfiltration,data_leak</group>
+  </rule>
+</group>
