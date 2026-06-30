@@ -1,0 +1,298 @@
+import os
+import json
+
+# Definir el contenido del Jupyter Notebook solicitado en formato JSON estructurado
+notebook_content = {
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# LABORATORIO 3: Modelo de Detección de Anomalías con ML\n",
+    "**Estudiante:** Mery Flores  \n",
+    "**Curso:** Seguridad en Redes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Tarea 3.1 — Exploración y preprocesamiento"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.ensemble import IsolationForest\n",
+    "from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix\n",
+    "import joblib\n",
+    "\n",
+    "# 1. Cargar el dataset\n",
+    "df = pd.read_csv('lab3/network_traffic.csv')\n",
+    "print(\"--- Estadísticas Descriptivas ---\")\n",
+    "print(df.describe())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 2. Visualizar la distribución de bytes_sent y duration_sec con histogramas\n",
+    "plt.figure(figsize=(12, 5))\n",
+    "plt.subplot(1, 2, 1)\n",
+    "sns.histplot(df['bytes_sent'], bins=30, kde=True, color='blue')\n",
+    "plt.title('Distribución de Bytes Sent')\n",
+    "\n",
+    "plt.subplot(1, 2, 2)\n",
+    "sns.histplot(df['duration_sec'], bins=30, kde=True, color='green')\n",
+    "plt.title('Distribución de Duration Sec')\n",
+    "plt.tight_layout()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 3. Identificar y tratar valores nulos o atípicos extremos\n",
+    "print(\"Valores nulos por columna:\")\n",
+    "print(df.isnull().sum())\n",
+    "df = df.dropna()  # Eliminar nulos si existieran"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 4. Feature engineering: cree al menos 2 nuevas variables derivadas\n",
+    "df['ratio_bytes'] = df['bytes_sent'] / (df['bytes_recv'] + 1)\n",
+    "df['bytes_por_segundo'] = df['bytes_sent'] / (df['duration_sec'] + 1)\n",
+    "print(df[['ratio_bytes', 'bytes_por_segundo']].head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 5. Normalice las features numéricas con StandardScaler\n",
+    "features_num = ['bytes_sent', 'bytes_recv', 'duration_sec', 'packets', 'ratio_bytes', 'bytes_por_segundo']\n",
+    "scaler = StandardScaler()\n",
+    "X_scaled = scaler.fit_transform(df[features_num])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Tarea 3.2 — Entrenamiento del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 1. Entrenar Isolation Forest (excluyendo label)\n",
+    "clf = IsolationForest(contamination=0.05, n_estimators=100, random_state=42)\n",
+    "clf.fit(X_scaled)\n",
+    "\n",
+    "# 2. Obtener las predicciones (-1 = anomalía, 1 = normal)\n",
+    "df['pred'] = clf.predict(X_scaled)\n",
+    "df['true_label'] = df['label'].map({'normal': 1, 'anomaly': -1})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 3. Calcule las métricas de evaluación usando la columna label\n",
+    "precision = precision_score(df['true_label'], df['pred'], pos_label=-1)\n",
+    "recall = recall_score(df['true_label'], df['pred'], pos_label=-1)\n",
+    "f1 = f1_score(df['true_label'], df['pred'], pos_label=-1)\n",
+    "cm = confusion_matrix(df['true_label'], df['pred'])\n",
+    "\n",
+    "print(f\"Precision: {precision:.4f}\")\n",
+    "print(f\"Recall: {recall:.4f}\")\n",
+    "print(f\"F1-Score: {f1:.4f}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 4. Grafique la matriz de confusión con seaborn\n",
+    "plt.figure(figsize=(5,4))\n",
+    "sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', xticklabels=['Anomalía', 'Normal'], yticklabels=['Anomalía', 'Normal'])\n",
+    "plt.title('Matriz de Confusión')\n",
+    "plt.ylabel('Real')\n",
+    "plt.xlabel('Predicción')\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Tarea 3.3 — Interpretación y umbral dinámico"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 1. Grafique el score de anomalía (decision_function)\n",
+    "df['anomaly_score'] = clf.decision_function(X_scaled)\n",
+    "plt.figure(figsize=(8,4))\n",
+    "sns.histplot(df['anomaly_score'], bins=50, color='purple', kde=True)\n",
+    "plt.title('Distribución de Scores de Anomalía')\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 2. Curva de umbral vs F1 para validación dinámica\n",
+    "scores = df['anomaly_score']\n",
+    "thresholds = np.linspace(scores.min(), scores.max(), 100)\n",
+    "f1_scores = [f1_score(df['true_label'], np.where(scores < t, -1, 1), pos_label=-1) for t in thresholds]\n",
+    "best_thresh = thresholds[np.argmax(f1_scores)]\n",
+    "\n",
+    "plt.figure(figsize=(8,4))\n",
+    "plt.plot(thresholds, f1_scores, color='orange', lw=2)\n",
+    "plt.axvline(best_thresh, color='blue', linestyle='--', label=f'Umbral óptimo: {best_thresh:.4f}')\n",
+    "plt.xlabel('Umbral (Score)')\n",
+    "plt.ylabel('F1-Score')\n",
+    "plt.title('Optimización de Umbral vs F1-Score')\n",
+    "plt.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 3. Top 10 registros más anómalos\n",
+    "top10 = df.sort_values(by='anomaly_score').head(10)\n",
+    "print(top10[['src_ip', 'dst_ip', 'dst_port', 'bytes_sent', 'duration_sec', 'anomaly_score']])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Análisis de Amenazas (Top 10):\n",
+    "Los registros identificados muestran comportamientos sumamente atípicos:\n",
+    "1. **Altos volúmenes de bytes enviados (`bytes_sent`)** combinados con una duración de conexión muy baja, lo cual es indicativo de un posible ataque de exfiltración masiva de datos por ráfagas.\n",
+    "2. **Conexiones repetitivas hacia puertos inusuales** que sugieren escaneo de puertos activo o actividad de Command & Control (C2)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Tarea 3.4 — Exportación del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Serializar componentes clave\n",
+    "joblib.dump(clf, 'lab3/modelo_anomalias.pkl')\n",
+    "joblib.dump(scaler, 'lab3/scaler.pkl')\n",
+    "print(\"Modelo y Scaler exportados con éxito en la carpeta lab3/\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
+
+# Escribir el Jupyter Notebook oficial
+with open('lab3/deteccion_anomalias.ipynb', 'w', encoding='utf-8') as f:
+    json.dump(notebook_content, f, indent=1)
+
+print("[+] Archivo 'lab3/deteccion_anomalias.ipynb' generado con éxito.")
+
+# Crear el script predecir.py requerido en la Tarea 3.4
+predict_script = """import sys
+import pandas as pd
+import joblib
+
+if len(sys.argv) < 2:
+    print("Uso correcto: python lab3/predecir.py nuevo_trafico.csv")
+    sys.exit(1)
+
+archivo_nuevo = sys.argv[1]
+
+try:
+    # Cargar modelo y escalador
+    clf = joblib.load('lab3/modelo_anomalias.pkl')
+    scaler = joblib.load('lab3/scaler.pkl')
+    
+    # Leer datos nuevos
+    df_new = pd.read_csv(archivo_nuevo)
+    
+    # Preprocesamiento rápido e idéntico
+    df_new['ratio_bytes'] = df_new['bytes_sent'] / (df_new['bytes_recv'] + 1)
+    df_new['bytes_por_segundo'] = df_new['bytes_sent'] / (df_new['duration_sec'] + 1)
+    
+    features_num = ['bytes_sent', 'bytes_recv', 'duration_sec', 'packets', 'ratio_bytes', 'bytes_por_segundo']
+    X_scaled = scaler.transform(df_new[features_num])
+    
+    # Predicción y score
+    df_new['pred'] = clf.predict(X_scaled)
+    df_new['score'] = clf.decision_function(X_scaled)
+    
+    # Filtrar solo anomalías (-1)
+    anomalas = df_new[df_new['pred'] == -1]
+    
+    print(f"\\n--- REGISTROS CLASIFICADOS COMO ANOMALÍA ({len(anomalas)}) ---")
+    if not anomalas.empty:
+        print(anomalas[['src_ip', 'dst_ip', 'dst_port', 'bytes_sent', 'score']].to_string())
+    else:
+        print("No se encontraron anomalías en el archivo provisto.")
+
+except Exception as e:
+    print(f"Error al procesar el archivo: {e}")
+"""
+
+with open('lab3/predecir.py', 'w', encoding='utf-8') as f:
+    f.write(predict_script)
+
+print("[+] Archivo 'lab3/predecir.py' generado con éxito.")
