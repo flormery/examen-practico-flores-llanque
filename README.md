@@ -273,7 +273,11 @@ Para comprobar que todo el Laboratorio 3 funcione a la perfección tal como lo p
 
 # LABORATORIO 4: Dashboard de Monitoreo
 
-* Son 4 visualizaciones: severidad, top IPs, timeline, pie de tipos
+* Son 4 visualizaciones: 
+1. Alertas por severidad
+2. top 5 IPs atacantes
+3. Trafico por hora
+4. Distribucion por tipo de regla
 
 ![Imagen](lab4/evidencias/SCR-4.3_dashboard.png)
 ```
