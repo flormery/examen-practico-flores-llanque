@@ -31,8 +31,8 @@ lab1/
 ---
 ## Creacion de la maquina virtual
 
-![Imagen](lab1/evidencias/Creacion_maquina_1.png)
-![Imagen](lab1/evidencias/Creacion_maquina_2.png)
+![Imagen](lab1/Evidencias/Creacion_maquina_1.png)
+![Imagen](lab1/Evidencias/Creacion_maquina_2.png)
 
 
 ## Configuramos para Reenviar los puertos (Port Forwarding).
@@ -43,7 +43,7 @@ añadimos una nueva regla haciendo clic en el icono verde + de la derecha con es
 •	Puerto anfitrión (Host Port): 2222
 •	Puerto invitado (Guest Port): 22
 
-![Imagen](lab1/evidencias/SSH.png)
+![Imagen](lab1/Evidencias/SSH.png)
 
 ## Requisitos
 
@@ -53,25 +53,25 @@ añadimos una nueva regla haciendo clic en el icono verde + de la derecha con es
 ```bash
 sudo apt update && sudo apt install python3-pip -y 
 ```
-![Imagen](lab1/evidencias/Instalar.gestor.pip3.png)
+![Imagen](lab1/Evidencias/Instalar.gestor.pip3.png)
 ---
 * Ahora que ya está instalado, vuelve a correr la instalación de las librerías gráficas
 ```bash
 pip3 install matplotlib pandas seaborn--break-system-packages 
 ```
-![Imagen](lab1/evidencias/librerías.gráficas.png)
+![Imagen](lab1/Evidencias/librerías.gráficas.png)
 
 
 ## Crear los Archivos de Logs en la VM
 * Crear el scripts que  debe leer los logs de forma relativa desde lab1/auth.log y lab1/access.log. Vamos a crearlos y pegarles el contenido: 
 nano lab1/auth.log
 # Crear access.log:
-![Imagen](lab1/evidencias/auth.log.png)
+![Imagen](lab1/Evidencias/auth.log.png)
 
 
 ### Crear access.log:
 
-![Imagen](lab1/evidencias/access.log.png)
+![Imagen](lab1/Evidencias/access.log.png)
 ---
 
 ### Crear analizar_ssh.py:
@@ -79,7 +79,7 @@ nano lab1/auth.log
 ```bash
 nano lab1/analizar_ssh.py
 ```
-![Imagen](lab1/evidencias/analizar_ssh.png)
+![Imagen](lab1/Evidencias/analizar_ssh.png)
 ---
 
 ### 3. Ejecutar la Tarea 1.2 y Guardar Evidencias
@@ -97,7 +97,7 @@ python3 analizar_ssh.py
 ✔ Exporta `reporte_ssh.json`
 
 ---
-![Imagen](lab1/evidencias/timeline_http.png)
+![Imagen](lab1/Evidencias/timeline_http.png)
 #### Análisis Web
 
 ```bash
@@ -110,13 +110,13 @@ python3 analizar_web.py
 ✔ Genera `reporte_web.json`
 
 ---
-![Imagen](lab1/evidencias/access.log.png)
+![Imagen](lab1/Evidencias/access.log.png)
 ### 4. Generar visualizaciones
 
 ```bash
 python3 visualizar.py
 ```
-![Imagen](lab1/evidencias/Visualizar.png)
+![Imagen](lab1/Evidencias/Visualizar.png)
 Se generan las siguientes gráficas en `graficas/`:
 
 * 📊 **top_10_ssh_fallidos.png** → Top 10 IPs con más intentos fallidos
@@ -133,14 +133,15 @@ Se generan las siguientes gráficas en `graficas/`:
 * Ranking de IPs más sospechosas
 * Alertas automáticas por comportamiento anómalo
 
-![Imagen](lab1/evidencias/auth.png)
+![Imagen](lab1/Evidencias/auth.png)
 
 ###  WEB (access.log)
 
 * Detección de escaneo de directorios
 * Identificación de ataques SQL Injection
 * Análisis de tráfico HTTP por estado de respuesta
-![Imagen](lab1/evidencias/access.png)
+
+![Imagen](lab1/Evidencias/access.png)
 
 ###  Visualización
 
@@ -164,9 +165,9 @@ Las capturas y pruebas adicionales pueden almacenarse en:
 ```text
 evidencias/
 ```
-![Imagen](lab1/evidencias/heatmap.png)
-![Imagen](lab1/evidencias/timeline.png)
-![Imagen](lab1/evidencias/top10.png)
+![Imagen](lab1/Evidencias/heatmap.png)
+![Imagen](lab1/Evidencias/timeline.png)
+![Imagen](lab1/Evidencias/top10.png)
 ---
 
 # Laboratorio 2: Configuración y Correlación de Reglas en Wazuh
@@ -177,18 +178,18 @@ Este directorio contiene la configuración y evidencias del Laboratorio 2, enfoc
 En la pantalla que me mostraste en tu captura, sigue estos pasos:
 1.	VM Name: Wazuh-Server-Flores
 
-![Imagen](lab2/evidencias/Creacion_maquina_1.png)
-![Imagen](lab2/evidencias/Creacion_maquina_2.png)
-![Imagen](lab2/evidencias/Creacion_maquina_3.png)
+![Imagen](lab2/Evidencias/Creacion_maquina_1.png)
+![Imagen](lab2/Evidencias/Creacion_maquina_2.png)
+![Imagen](lab2/Evidencias/Creacion_maquina_3.png)
 
 # Para conectar al ssh:
 
-[Imagen](lab2/evidencias/ssh.png)
+[Imagen](lab2/Evidencias/ssh.png)
 
 # Descargar e instalar el repositorio de Wazuh
 curl -sO https://packages.wazuh.com/4.9/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
 
-![Imagen](lab2/evidencias/wazuh.png)
+![Imagen](lab2/Evidencias/wazuh.png)
 
 
 # Entrar a la carpeta principal
@@ -203,26 +204,26 @@ mkdir -p lab2/evidencia
 - `simular_bruteforce.sh`: Script para generar tráfico de prueba.
 - `network_traffic.csv`: Dataset para pruebas de correlación.
 - `evidencia/`: Capturas de pantalla de la validación del sistema.
-![Imagen](lab2/evidencias/1.png)
-![Imagen](lab2/evidencias/2.png)
+![Imagen](lab2/Evidencias/1.png)
+![Imagen](lab2/Evidencias/2.png)
 
 ## Ejecuta estos comandos para mover las reglas al sistema operativo donde Wazuh las va a procesar:
 1. sudo cp lab2/local_rules_ssh.xml /var/ossec/etc/rules/local_rules_ssh.xml 
 2. sudo cp lab2/local_rules_exfil.xml /var/ossec/etc/rules/local_rules_exfil.xml 
 3. Ejecutar simulación: `./simular_bruteforce.sh`
-![Imagen](lab2/evidencias/3.png)
-![Imagen](lab2/evidencias/4.png)
+![Imagen](lab2/Evidencias/3.png)
+![Imagen](lab2/Evidencias/4.png)
 
 # Ejecutar la Simulación Oficial
 ./simular_bruteforce.sh
-![Imagen](lab2/evidencias/5.png)
+![Imagen](lab2/Evidencias/5.png)
 
 # Ver la Alerta y tomar tu Captura de Pantalla
 Como este script escribe directo en /var/log/auth.log (el archivo de logs que Wazuh vigila continuamente), la regla se va a activar en un segundo. Ejecuta este comando para ver la alerta generada por Wazuh:
 
 sudo grep -A 10 "100001" /var/ossec/logs/alerts/alerts.json
 
-![Imagen](lab2/evidencias/6.png)
+![Imagen](lab2/Evidencias/6.png)
 
 ## 🎯 Conclusión
 
@@ -247,26 +248,26 @@ Vamos a crear un archivo en Python que leerá los datos, entrenará el modelo de
 
 * nano lab3/generar_todo_lab3.py
 
-![Imagen](lab3/evidencias/lab3.png)
+![Imagen](lab3/Evidencias/lab3.png)
 
 # Instalar las librerías de Inteligencia Artificial en Windows
 Ejecutar este comando en tu Git Bash para instalar las herramientas necesarias usando pip:
 
-![Imagen](lab3/evidencias/instalar.png)
+![Imagen](lab3/Evidencias/instalar.png)
 
 # Volver a ejecutar la generación del Modelo
 Una vez que termine de instalar, vuelve a ejecutar el comando rápido que genera tus archivos .pkl (el modelo entrenado y el normalizador):
 
-![Imagen](lab3/evidencias/ejecucion.png)
+![Imagen](lab3/Evidencias/ejecucion.png)
 
 # Validar el script de producción (predecir.py)
 Para comprobar que todo el Laboratorio 3 funcione a la perfección tal como lo pide la guía de la Tarea 3.4, corre el script de predicción:
 
-![Imagen](lab3/evidencias/prueba.png)
+![Imagen](lab3/Evidencias/prueba.png)
 
 # Evidencias finales:
-![Imagen](lab3/evidencias/SCR-3.1_eda.png)
-![Imagen](lab3/evidencias/SCR-3.2_metricas.png)
-![Imagen](lab3/evidencias/SCR-3.3_umbral_f1.png)
+![Imagen](lab3/Evidencias/SCR-3.1_eda.png)
+![Imagen](lab3/Evidencias/SCR-3.2_metricas.png)
+![Imagen](lab3/Evidencias/SCR-3.3_umbral_f1.png)
 ```
 
