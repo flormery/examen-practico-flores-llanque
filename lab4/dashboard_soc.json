@@ -1,0 +1,16 @@
+{
+  "title": "SOC - Monitor de Seguridad",
+  "author": "Mery Flores",
+  "panels": [
+    "V1 Alertas por Severidad",
+    "V2 Top 10 IPs con m\u00e1s alertas",
+    "V3 Alertas por hora",
+    "V4 Distribuci\u00f3n por tipo de regla"
+  ],
+  "time_range": "24h",
+  "alert_rule": {
+    "condition": "count > 5",
+    "timeframe": "5m",
+    "description": "Se dispara si el conteo supera 5 eventos en 5 minutos"
+  }
+}
