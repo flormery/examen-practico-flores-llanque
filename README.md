@@ -270,5 +270,11 @@ Para comprobar que todo el Laboratorio 3 funcione a la perfección tal como lo p
 ![Imagen](lab3/Evidencias/SCR-3.1_eda.png)
 ![Imagen](lab3/Evidencias/SCR-3.2_metricas.png)
 ![Imagen](lab3/Evidencias/SCR-3.3_umbral_f1.png)
+
+# LABORATORIO 4: Dashboard de Monitoreo
+
+* Son 4 visualizaciones: severidad, top IPs, timeline, pie de tipos
+
+![Imagen](lab4/evidencias/SCR-4.3_dashboard.png)
 ```
 
