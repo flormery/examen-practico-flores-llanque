@@ -53,7 +53,7 @@ añadimos una nueva regla haciendo clic en el icono verde + de la derecha con es
 ```bash
 sudo apt update && sudo apt install python3-pip -y 
 ```
-![Imagen](lab1/Evidencias/Instalar.gestor.pip3.png)
+![Imagen](lab1/Evidencias/Instalar.png)
 ---
 * Ahora que ya está instalado, vuelve a correr la instalación de las librerías gráficas
 ```bash
@@ -117,6 +117,7 @@ python3 analizar_web.py
 python3 visualizar.py
 ```
 ![Imagen](lab1/Evidencias/Visualizar.png)
+
 Se generan las siguientes gráficas en `graficas/`:
 
 * 📊 **top_10_ssh_fallidos.png** → Top 10 IPs con más intentos fallidos
@@ -133,7 +134,7 @@ Se generan las siguientes gráficas en `graficas/`:
 * Ranking de IPs más sospechosas
 * Alertas automáticas por comportamiento anómalo
 
-![Imagen](lab1/Evidencias/auth.png)
+![Imagen](lab1/Evidencias/auth.log.png)
 
 ###  WEB (access.log)
 
@@ -141,7 +142,7 @@ Se generan las siguientes gráficas en `graficas/`:
 * Identificación de ataques SQL Injection
 * Análisis de tráfico HTTP por estado de respuesta
 
-![Imagen](lab1/Evidencias/access.png)
+![Imagen](lab1/Evidencias/access.log.png)
 
 ###  Visualización
 
